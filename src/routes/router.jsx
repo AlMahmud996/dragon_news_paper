@@ -17,11 +17,15 @@ const router = createBrowserRouter([
                 element: <CategoryNews></CategoryNews>,
                 loader: ()=> fetch("/news.json"),
             },
-        ]
+        ],
+    },
+    {
+        path: "/news",
+        element: <h2>News Layout</h2>
     },
     {
         path: "/auth",
-        element: <h2>News Layout</h2>
+        element: <h2>Authentication Layout</h2>
     },
     {
         path: "/*",
