@@ -1,20 +1,36 @@
-import React, { use } from 'react';
-import { Link } from 'react-router';
+import React, { use, useState } from 'react';
+import { Link, useNavigate } from 'react-router';
 import { AuthContext } from '../../provider/AuthProvider';
 
 const Register = () => {
-    const { createUser, setUser } = use(AuthContext);
+    const { createUser, setUser, updateUser } = use(AuthContext);
+    const [nameError, setNameError] = useState("");
+    const navigate = useNavigate();
     const handleRegister = (e) => {
+        
         e.preventDefault();
         const form = e.target;
         const name = form.name.value;
+        if(name.length < 5){
+            setNameError("Name should be More than 5 Character");
+            return;
+        }else{
+            setNameError("")
+        }
         const photo = form.photo.value;
         const email = form.email.value;
         const password = form.password.value;
         console.log({ name, email, password });
         createUser(email, password)
-            .then(result => {
+            .then((result) => {
                 const user = result.user;
+                updateUser({displayName: name, photoURL: photo}).then(()=>{
+                    setUser({ ...user, displayName: name, photoURL: photo});
+                    navigate("/")
+                }).catch((error) => {
+                    console.log(error);
+                    setUser(user)
+                  });
                 setUser(user);
             })
             .catch((error) => {
@@ -32,6 +48,7 @@ const Register = () => {
                         {/*Name */}
                         <label className="label">Name</label>
                         <input name="name" type="text" className="input" placeholder="Name" required />
+                        {nameError && <p className='text-xs text-error'>{nameError}</p>}
                         {/*Photo URL */}
                         <label className="label">Photo URL</label>
                         <input name="photo" type="text" className="input" placeholder="Photo URL" />
